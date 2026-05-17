@@ -1,0 +1,10 @@
+{
+  "providers": {
+    "php": {
+      "extensions": [
+        "pdo_mysql",
+        "bcmath"
+      ]
+    }
+  }
+}
