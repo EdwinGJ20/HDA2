@@ -30,27 +30,27 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 */
 
 
-Route::post('HDA1/login', [App\Http\Controllers\API\UsuarioController::class, 'login']);
-Route::apiResource('HDA1/usuario', UsuarioController::class);
-Route::apiResource('HDA1/usuario_test', Usuario_TestController::class);
-Route::apiResource('HDA1/usuario_alimentos', Usuario_AlimentosController::class);
-Route::apiResource('HDA1/tipos_resultados', Tipos_ResultadosController::class);
-Route::apiResource('HDA1/tipos_diagnostico', Tipos_DiagnosticoController::class);
-Route::apiResource('HDA1/test', TestController::class);
-Route::apiResource('HDA1/Respuestas_Eva', Respuestas_EvaController::class);
-Route::get('HDA1/preguntas/test/{id_test}', [PreguntasController::class, 'obtenerPorTest']);
-Route::apiResource('HDA1/Evaluacion', EvaluacionController::class);
-Route::apiResource('HDA1/Alimentos', AlimentosController::class);
-Route::apiResource('HDA1/Actividades', ActividadesController::class);
+Route::post('HDA2/login', [App\Http\Controllers\API\UsuarioController::class, 'login']);
+Route::apiResource('HDA2/usuario', UsuarioController::class);
+Route::apiResource('HDA2/usuario_test', Usuario_TestController::class);
+Route::apiResource('HDA2/usuario_alimentos', Usuario_AlimentosController::class);
+Route::apiResource('HDA2/tipos_resultados', Tipos_ResultadosController::class);
+Route::apiResource('HDA2/tipos_diagnostico', Tipos_DiagnosticoController::class);
+Route::apiResource('HDA2/test', TestController::class);
+Route::apiResource('HDA2/Respuestas_Eva', Respuestas_EvaController::class);
+Route::get('HDA2/preguntas/test/{id_test}', [PreguntasController::class, 'obtenerPorTest']);
+Route::apiResource('HDA2/Evaluacion', EvaluacionController::class);
+Route::apiResource('HDA2/Alimentos', AlimentosController::class);
+Route::apiResource('HDA2/Actividades', ActividadesController::class);
 Route::get('evaluaciones/reporte/{id}', [App\Http\Controllers\API\EvaluacionController::class, 'obtenerReporteCompleto']);
 // Rutas de Comunidad
-Route::get('HDA1/foros', [ComunidadController::class, 'getForos']);
-Route::post('HDA1/foros', [ComunidadController::class, 'crearForo']);
+Route::get('HDA2/foros', [ComunidadController::class, 'getForos']);
+Route::post('HDA2/foros', [ComunidadController::class, 'crearForo']);
 
-Route::get('HDA1/diario/{idUsuario}', [ComunidadController::class, 'getMisDiarios']);
-Route::post('HDA1/diario', [ComunidadController::class, 'guardarDiario']);
+Route::get('HDA2/diario/{idUsuario}', [ComunidadController::class, 'getMisDiarios']);
+Route::post('HDA2/diario', [ComunidadController::class, 'guardarDiario']);
 
-Route::get('HDA1/chat/{user1}/{user2}', [ComunidadController::class, 'getChatPrivado']);
-Route::post('HDA1/chat', [ComunidadController::class, 'enviarMensaje']);
+Route::get('HDA2/chat/{user1}/{user2}', [ComunidadController::class, 'getChatPrivado']);
+Route::post('HDA2/chat', [ComunidadController::class, 'enviarMensaje']);
 // Ruta para obtener el perfil completo del usuario
-Route::get('HDA1/perfil_completo/{idUsuario}', [ComunidadController::class, 'getPerfilCompleto']);
+Route::get('HDA2/perfil_completo/{idUsuario}', [ComunidadController::class, 'getPerfilCompleto']);
