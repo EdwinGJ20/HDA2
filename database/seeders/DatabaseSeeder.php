@@ -21,5 +21,10 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        // Ejecuta la carga de tus tablas insertando el archivo SQL
+        $this->call([
+            HdaDatabaseSeeder::class,
+        ]);
     }
 }
