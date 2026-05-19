@@ -9,19 +9,20 @@ use App\Http\Controllers\Controller;
 class Usuario_AlimentosController extends Controller
 {
     // LISTAR TODAS LAS RELACIONES (LIMPIO Y CORREGIDO)
-    public function index()
-    {
-        try {
-            $datos = Usuario_Alimentos::with(['usuario', 'alimento'])->get();
-            return response()->json($datos, 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error_message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine()
-            ], 500);
-        }
+   public function index()
+{
+    try {
+        // Cambiado 'alimento' por 'alimentos' con s
+        $datos = Usuario_Alimentos::with(['usuario', 'alimentos'])->get();
+        return response()->json($datos, 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'error_message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine()
+        ], 500);
     }
+}
 
     // ASIGNAR ALIMENTO A USUARIO
     public function store(Request $request)
@@ -35,14 +36,15 @@ class Usuario_AlimentosController extends Controller
     }
 
     // MOSTRAR POR USUARIO
-    public function show($id_usuario)
-    {
-        $asignaciones = Usuario_Alimentos::where('ID_usuario', $id_usuario)
-                        ->with('alimento')
-                        ->get();
+public function show($id_usuario)
+{
+    // Cambiado 'alimento' por 'alimentos' con s
+    $asignaciones = Usuario_Alimentos::where('ID_usuario', $id_usuario)
+                    ->with('alimentos')
+                    ->get();
 
-        return response()->json($asignaciones);
-    }
+    return response()->json($asignaciones);
+}
 
     // ELIMINAR ASIGNACIÓN
     public function destroy(Request $request)
