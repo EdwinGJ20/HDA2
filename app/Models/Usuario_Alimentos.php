@@ -9,12 +9,10 @@ class Usuario_Alimentos extends Model
 {
     use HasFactory;
 
-    protected $table = 'usuario_alimentos'; // Verifica si tiene guion bajo en tu DB
+    protected $table = 'usuario_alimentos'; 
     
-    // Al ser tabla pivote, Laravel no encontrará un "id" automático
     public $incrementing = false;
     protected $primaryKey = null; 
-    
     public $timestamps = false;
 
     protected $fillable = [
@@ -22,15 +20,17 @@ class Usuario_Alimentos extends Model
         'ID_Alimento'
     ];
 
-    // Relación con Usuario
+    // Relación con Usuario corregida explícitamente
     public function usuario()
     {
-        return $this->belongsTo(Usuario::class, 'ID_usuario');
+        // 1. Modelo destino, 2. FK en esta tabla, 3. PK en la tabla destino
+        return $this->belongsTo(Usuario::class, 'ID_usuario', 'ID_usuario');
     }
 
-    // Relación con Alimento
+    // Relación con Alimentos corregida explícitamente
     public function alimento()
     {
-        return $this->belongsTo(Alimentos::class, 'ID_Alimento');
+        // 1. Modelo destino, 2. FK en esta tabla, 3. PK en la tabla destino
+        return $this->belongsTo(Alimentos::class, 'ID_Alimento', 'ID_Alimento');
     }
 }
