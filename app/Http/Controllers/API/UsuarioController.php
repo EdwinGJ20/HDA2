@@ -17,22 +17,44 @@ class UsuarioController extends Controller
 
     // CREAR CON CIFRADO
     public function store(Request $request)
-    {
+{
+    try {
         $data = $request->all();
 
-        // Ciframos la contraseña si viene en la petición
+        // 1. Ciframos la contraseña si viene en la petición
         if ($request->has('Password')) {
             $data['Password'] = Hash::make($request->Password);
         }
 
+        // 2. Forzamos la fecha de registro actual (¡Crucial ya que timestamps = false!)
+        if (!isset($data['Fecha_Registro'])) {
+            $data['Fecha_Registro'] = now()->toDateTimeString(); // O now()->format('Y-m-d') según tu tipo de columna
+        }
+
+        // 3. Evitamos errores de BD asignando valores por defecto si no vienen de Android
+        if (!isset($data['Edad'])) {
+            $data['Edad'] = 0; // O null si tu columna en la BD acepta nulls
+        }
+
+        if (!isset($data['Localidad'])) {
+            $data['Localidad'] = 'No especificada'; // O null si acepta nulls
+        }
+
+        // 4. Creamos el usuario
         $usuario = Usuario::create($data);
 
         return response()->json([
             'message' => 'Usuario creado con éxito y contraseña cifrada',
             'data' => $usuario
         ], 201);
-    }
 
+    } catch (\Exception $e) {
+        // Si sigue fallando por otra columna, esto te dirá exactamente cuál es en Android
+        return response()->json([
+            'message' => 'Error de Base de Datos: ' . $e->getMessage()
+        ], 500);
+    }
+}
     // MÉTODO DE LOGIN (Ajustado a Correo_Electronico)
     public function login(Request $request)
     {
