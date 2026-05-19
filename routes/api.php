@@ -54,6 +54,9 @@ Route::post('HDA2/foros', [ComunidadController::class, 'crearForo']);
 Route::get('HDA2/diario/{idUsuario}', [ComunidadController::class, 'getMisDiarios']);
 Route::post('HDA2/diario', [ComunidadController::class, 'guardarDiario']);
 
+// --- PUENTE EXCLUSIVO PARA EL LOGIN WEB (DENTRO DEL REPOSITORIO UNIFICADO) ---
+Route::get('puente-web/login', [App\Http\Controllers\AuthController::class, 'showLogin'])->name('login.puente');
+
 Route::get('HDA2/chat/{user1}/{user2}', [ComunidadController::class, 'getChatPrivado']);
 Route::post('HDA2/chat', [ComunidadController::class, 'enviarMensaje']);
 // Ruta para obtener el perfil completo del usuario
