@@ -8,10 +8,10 @@ use App\Http\Controllers\Controller;
 
 class TestController extends Controller
 {
-    // LISTAR TODOS
+    // LISTAR TODOS (Ahora incluye sus preguntas)
     public function index()
     {
-        return response()->json(Test::all(), 200);
+        return response()->json(Test::with('preguntas')->get(), 200);
     }
 
     // CREAR
@@ -25,12 +25,23 @@ class TestController extends Controller
         ], 201);
     }
 
-    // MOSTRAR UNO
+    // MOSTRAR UNO ESPECÍFICO CON SUS PREGUNTAS (Para /test/1 o /test/2)
     public function show($id)
     {
-        return response()->json(
-            Test::findOrFail($id)
-        );
+        // Buscamos el test por su ID_test cargando de golpe su relación 'preguntas'
+        $test = Test::with('preguntas')->findOrFail($id);
+
+        return response()->json($test, 200);
+    }
+
+    // NUEVO MÉTODO: OBTENER UN TEST ALEATORIO DIRECTAMENTE DESDE LA API
+    // (Útil si prefieres no calcular el random desde el Login de Android)
+    public function getRandomTest()
+    {
+        // Trae un test al azar (ID 1 o 2) con todas sus preguntas
+        $test = Test::with('preguntas')->inRandomOrder()->firstOrFail();
+
+        return response()->json($test, 200);
     }
 
     // ACTUALIZAR

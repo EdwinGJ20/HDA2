@@ -4,18 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Test extends Model
 {
     use HasFactory;
 
-    // Nombre exacto de la tabla en tu captura
     protected $table = 'test'; 
-    
-    // Tu llave primaria personalizada
     protected $primaryKey = 'ID_test';
-    
-    // Desactivamos timestamps si no tienes created_at/updated_at
     public $timestamps = false;
 
     protected $fillable = [
@@ -23,4 +19,15 @@ class Test extends Model
         'Descripcion',
         'Clasificacion'
     ];
+
+    /**
+     * Obtener las preguntas asociadas a este Test.
+     */
+    public function preguntas(): HasMany
+    {
+        // El primer parámetro es el modelo relacionado.
+        // El segundo es la llave foránea en la tabla 'preguntas'.
+        // El tercero es la llave local en la tabla 'test'.
+        return $this->hasMany(Pregunta::class, 'ID_test', 'ID_test');
+    }
 }

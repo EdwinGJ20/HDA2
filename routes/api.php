@@ -37,6 +37,10 @@ Route::apiResource('HDA2/usuario_alimentos', Usuario_AlimentosController::class)
 Route::apiResource('HDA2/tipos_resultados', Tipos_ResultadosController::class);
 Route::apiResource('HDA2/tipos_diagnostico', Tipos_DiagnosticoController::class);
 Route::apiResource('HDA2/test', TestController::class);
+// Ruta estándar para pedir un test por su ID específico (/api/test/1 o /api/test/2)
+Route::get('/test/{id}', [TestController::class, 'show']);
+// OPCIONAL: Ruta por si quieres pedir un test aleatorio sin pasar un ID (/api/test_aleatorio)
+Route::get('/test_aleatorio', [TestController::class, 'getRandomTest']);
 Route::apiResource('HDA2/Respuestas_Eva', Respuestas_EvaController::class);
 Route::get('HDA2/preguntas/test/{id_test}', [PreguntasController::class, 'obtenerPorTest']);
 Route::apiResource('HDA2/Evaluacion', EvaluacionController::class);
