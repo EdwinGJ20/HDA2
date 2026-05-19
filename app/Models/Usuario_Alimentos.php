@@ -28,7 +28,7 @@ class Usuario_Alimentos extends Model
     }
 
     // Relación con Alimentos corregida explícitamente
-    public function alimento()
+    public function alimentos()
     {
         // 1. Modelo destino, 2. FK en esta tabla, 3. PK en la tabla destino
         return $this->belongsTo(Alimentos::class, 'ID_Alimento', 'ID_Alimento');
