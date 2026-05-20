@@ -61,3 +61,5 @@ Route::get('HDA2/chat/{user1}/{user2}', [ComunidadController::class, 'getChatPri
 Route::post('HDA2/chat', [ComunidadController::class, 'enviarMensaje']);
 // Ruta para obtener el perfil completo del usuario
 Route::get('HDA2/perfil_completo/{idUsuario}', [ComunidadController::class, 'getPerfilCompleto']);
+// Abre routes/api.php y añade esta línea junto a las tuyas de usuarios
+Route::post('HDA2/verificar-2fa', [App\Http\Controllers\API\UsuarioController::class, 'verify2fa']);
