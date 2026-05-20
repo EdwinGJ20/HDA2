@@ -56,29 +56,37 @@ class UsuarioController extends Controller
     }
 }
     // MÉTODO DE LOGIN (Ajustado a Correo_Electronico)
-    public function login(Request $request)
-    {
-        // Validamos que envíen los campos correctos según tu tabla
-        $request->validate([
-            'Correo_Electronico' => 'required|email',
-            'Password' => 'required'
-        ]);
+  public function login(Request $request) {
+    $request->validate([
+        'Correo_Electronico' => 'required|email',
+        'Password' => 'required'
+    ]);
 
-        // Buscamos por el nombre exacto de tu columna
-        $usuario = Usuario::where('Correo_Electronico', $request->Correo_Electronico)->first();
+    $usuario = Usuario::where('Correo_Electronico', $request->Correo_Electronico)->first();
 
-        // Verificamos existencia y comparamos hash de la contraseña
-        if ($usuario && Hash::check($request->Password, $usuario->Password)) {
-            return response()->json([
-                'message' => 'Acceso correcto',
-                'usuario' => $usuario
-            ], 200);
+    if ($usuario && Hash::check($request->Password, $usuario->Password)) {
+        
+        // Si el usuario es administrador, saltamos el 2FA por comodidad de gestión
+        if ($usuario->Rol === 'admin') {
+            return response()->json(['message' => 'Acceso correcto admin', 'usuario' => $usuario], 200);
         }
 
+        // GENERAMOS CÓDIGO DE 6 DÍGITOS PARA EL USUARIO NORMAL
+        $codigo = rand(100000, 999999);
+        $usuario->codigo_2fa = $codigo; 
+        $usuario->save();
+
+        // AQUÍ ENVIARIAS EL EMAIL USANDO LA LÓGICA DE LARAVEL:
+        // Mail::to($usuario->Correo_Electronico)->send(new Send2faCode($codigo));
+
         return response()->json([
-            'message' => 'Credenciales inválidas (Correo o Contraseña incorrectos)'
-        ], 401);
+            'message' => 'Código 2FA enviado al correo',
+            'usuario' => $usuario // Lo mandamos para que Android sepa el rol, pero retenido
+        ], 200);
     }
+    
+    return response()->json(['message' => 'Credenciales inválidas'], 401);
+}
 
     // MOSTRAR UNO
     public function show($id)
