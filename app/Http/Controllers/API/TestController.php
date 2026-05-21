@@ -26,12 +26,32 @@ class TestController extends Controller
     }
 
     // MOSTRAR UNO ESPECÍFICO CON SUS PREGUNTAS (Para /test/1 o /test/2)
+    // MOSTRAR PREGUNTAS DE UN TEST ESPECÍFICO FORMATEADO PARA ANDROID
     public function show($id)
     {
-        // Buscamos el test por su ID_test cargando de golpe su relación 'preguntas'
+        // 1. Buscamos el test cargando sus preguntas asociadas
         $test = Test::with('preguntas')->findOrFail($id);
 
-        return response()->json($test, 200);
+        // 2. Definimos las opciones que van a pintar los RadioButtons en Android
+        // (Modifica estos textos si tu test usa opciones diferentes en tu capstone)
+        $opcionesFijas = [
+            "Casi siempre",
+            "Frecuentemente",
+            "A veces",
+            "Nunca o casi nunca"
+        ];
+
+        // 3. Convertimos la respuesta en la lista directa de preguntas que espera Retrofit
+        $preguntasFormateadas = $test->preguntas->map(function($item) use ($opcionesFijas) {
+            return [
+                'ID_pregunta' => $item->ID_pregunta, 
+                'pregunta'    => $item->Pregunta,    // <- Ojo: Verifica que en tu Modelo/BD sea "Pregunta" con P mayúscula
+                'opciones'    => $opcionesFijas      // El array que tu TestScreen.kt va a mapear
+            ];
+        });
+
+        // 4. Retornamos la LISTA limpia que tu objeto de Android espera recibir
+        return response()->json($preguntasFormateadas, 200);
     }
 
     // NUEVO MÉTODO: OBTENER UN TEST ALEATORIO DIRECTAMENTE DESDE LA API
