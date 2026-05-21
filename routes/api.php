@@ -59,3 +59,6 @@ Route::get('HDA2/perfil_completo/{idUsuario}', [ComunidadController::class, 'get
 
 // --- PUENTE EXCLUSIVO PARA EL LOGIN WEB ---
 Route::get('puente-web/login', [App\Http\Controllers\AuthController::class, 'showLogin'])->name('login.puente');
+
+// Agrégala al final de routes/api.php por si Android busca sin el prefijo HDA2/
+Route::get('preguntas/test/{id_test}', [App\Http\Controllers\API\PreguntasController::class, 'obtenerPorTest']);
