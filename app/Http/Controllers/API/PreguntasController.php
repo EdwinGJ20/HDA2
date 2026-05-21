@@ -65,13 +65,30 @@ public function porTest($id_test)
     // Método para obtener preguntas de un cuestionario específico
 public function obtenerPorTest($id_test)
 {
-    // Buscamos las preguntas donde ID_test coincida con el que mandamos
+    // 1. Buscamos las preguntas filtradas por el ID del test asignado
     $preguntas = Preguntas::where('ID_test', $id_test)->get();
 
     if ($preguntas->isEmpty()) {
         return response()->json(['message' => 'No hay preguntas para este test'], 404);
     }
 
-    return response()->json($preguntas, 200);
+    // 2. Definimos las opciones que van a pintar los RadioButtons en Android Studio
+    $opcionesFijas = [
+        "Casi siempre",
+        "Frecuentemente",
+        "A veces",
+        "Nunca o casi nunca"
+    ];
+
+    // 3. Formateamos la respuesta para asegurar que vayan mapeadas con la lista de opciones obligatoria
+    $respuestaFormateada = $preguntas->map(function($item) use ($opcionesFijas) {
+        return [
+            'ID_pregunta' => $item->ID_pregunta, 
+            'pregunta'    => $item->Pregunta ?? $item->pregunta ?? 'Pregunta sin texto', 
+            'opciones'    => $opcionesFijas // <-- ¡Inyección crucial del arreglo para que Android no truene!
+        ];
+    });
+
+    return response()->json($respuestaFormateada, 200);
 }
 }
