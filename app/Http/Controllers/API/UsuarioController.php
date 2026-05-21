@@ -56,21 +56,32 @@ class UsuarioController extends Controller
         }
     }
 
-    // MÉTODO DE LOGIN CON ENVÍO REAL DE 2FA
+   // MÉTODO DE LOGIN AJUSTADO PARA EVITAR VALIDACIONES AUTOMÁTICAS OCULTAS
     public function login(Request $request) 
     {
-        $request->validate([
+        // En lugar de usar $request->validate() que a veces se dispara en inglés y bloquea la petición antes de tiempo,
+        // validamos manualmente con un validador clásico:
+        $validator = \Validator::make($request->all(), [
             'Correo_Electronico' => 'required|email',
             'Password' => 'required'
         ]);
 
+        if ($validator->fails()) {
+            return response()->json(['message' => 'Por favor, introduce un correo y contraseña válidos.'], 422);
+        }
+
+        // Buscamos al usuario por correo electrónico
         $usuario = Usuario::where('Correo_Electronico', $request->Correo_Electronico)->first();
 
+        // Verificamos si el usuario existe y si la contraseña coincide con el Hash
         if ($usuario && Hash::check($request->Password, $usuario->Password)) {
             
             // Si el usuario es administrador, saltamos el 2FA por comodidad de gestión
             if ($usuario->Rol === 'admin' || $usuario->Rol === 'administrador') {
-                return response()->json(['message' => 'Acceso correcto admin', 'usuario' => $usuario], 200);
+                return response()->json([
+                    'message' => 'Acceso correcto admin', 
+                    'usuario' => $usuario
+                ], 200);
             }
 
             // GENERAMOS CÓDIGO DE 6 DÍGITOS PARA EL USUARIO NORMAL
@@ -79,14 +90,11 @@ class UsuarioController extends Controller
             $usuario->save();
 
             try {
-                // ACTIVADO: Envío del correo electrónico usando la plantilla nativa de texto de Laravel
                 Mail::raw("Tu código de verificación de seguridad para HDA1 es: $codigo", function ($message) use ($usuario) {
                     $message->to($usuario->Correo_Electronico)
                             ->subject("Código de Verificación 2FA");
                 });
             } catch (\Exception $mailException) {
-                // Si el servidor de correos falla (ej. malas credenciales en Railway), guardamos el error en el log 
-                // pero no tiramos la app, permitiéndote recuperar el código desde la base de datos de Railway.
                 \Log::error("Error enviando correo 2FA: " . $mailException->getMessage());
             }
 
@@ -96,7 +104,8 @@ class UsuarioController extends Controller
             ], 200);
         }
         
-        return response()->json(['message' => 'Credenciales inválidas'], 401);
+        // Retorno manual explícito
+        return response()->json(['message' => 'Correo o contraseña incorrectos'], 401);
     }
 
     // NUEVO MÉTODO: RECIBE EL CÓDIGO DESDE ANDROID Y DA ACCESO COMPLETO
