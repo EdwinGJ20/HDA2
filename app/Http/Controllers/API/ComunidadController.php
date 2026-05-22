@@ -54,6 +54,25 @@ class ComunidadController extends Controller
             ], 500);
         }
     }
+    public function editarForo(Request $request, $id) {
+    try {
+        $foro = Foro::findOrFail($id);
+        
+        // Validamos que el usuario sea el dueño del post (seguridad básica)
+        if ($foro->ID_usuario != $request->input('ID_usuario')) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
+        $foro->update([
+            'Titulo'    => $request->input('Titulo'),
+            'Contenido' => $request->input('Contenido')
+        ]);
+
+        return response()->json(['message' => 'Post actualizado correctamente'], 200);
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'Error al editar', 'error' => $e->getMessage()], 500);
+    }
+}
     // --- LÓGICA DE DIARIOS (PRIVADOS) ---
     public function getMisDiarios($idUsuario) {
         return response()->json(Diario::where('ID_usuario', $idUsuario)->latest()->get());

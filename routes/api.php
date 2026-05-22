@@ -51,6 +51,7 @@ Route::apiResource('HDA2/usuario_alimentos', Usuario_AlimentosController::class)
 // --- COMUNIDAD, DIARIO Y CHAT ---
 Route::get('HDA2/foros', [ComunidadController::class, 'getForos']);
 Route::post('HDA2/foros', [ComunidadController::class, 'crearForo']);
+Route::put('HDA2/foros/{id}', [ComunidadController::class, 'editarForo']);
 Route::get('HDA2/diario/{idUsuario}', [ComunidadController::class, 'getMisDiarios']);
 Route::post('HDA2/diario', [ComunidadController::class, 'guardarDiario']);
 Route::get('HDA2/chat/{user1}/{user2}', [ComunidadController::class, 'getChatPrivado']);
