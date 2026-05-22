@@ -15,9 +15,34 @@ class ComunidadController extends Controller
         return response()->json(Foro::with('usuario:ID_usuario,Nombre')->latest()->get());
     }
 
-    public function crearForo(Request $request) {
-        $foro = Foro::create($request->all());
-        return response()->json(['message' => 'Post creado', 'data' => $foro], 201);
+// --- LÓGICA DE FOROS CORREGIDA CONTRA ERRORES 500 ---
+  public function crearForo(Request $request) {
+        try {
+            $data = $request->all();
+
+            // 🚀 Inyectamos la fecha actual del servidor
+            if (!isset($data['Fecha_Creacion'])) {
+                $data['Fecha_Creacion'] = now()->toDateTimeString();
+            }
+
+            // 🚀 Inyectamos una categoría por defecto para evitar campos vacíos en BD
+            if (!isset($data['Categoria'])) {
+                $data['Categoria'] = 'General';
+            }
+
+            $foro = Foro::create($data);
+
+            return response()->json([
+                'message' => 'Post creado con éxito',
+                'data' => $foro
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error interno en el servidor al crear el foro',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     // --- LÓGICA DE DIARIOS (PRIVADOS) ---
