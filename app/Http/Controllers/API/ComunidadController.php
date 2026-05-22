@@ -17,32 +17,31 @@ class ComunidadController extends Controller
 
 // --- LÓGICA DE FOROS CORREGIDA CONTRA ERRORES 500 ---
 // --- LÓGICA DE FOROS CORREGIDA AL 100% CONTRA ERRORES 500 ---
+    // --- LÓGICA DE FOROS CORREGIDA DE FORMA DEFINITIVA ---
     public function crearForo(Request $request) {
         try {
-            // Caputamos todo el paquete que manda Android
-            $data = $request->all();
+            // 🌟 CAPTURAMOS LOS 4 CAMPOS: Incluyendo Categoria de la petición
+            $data = $request->only(['ID_usuario', 'Titulo', 'Contenido', 'Categoria']);
 
-            // Insertamos directamente usando las columnas reales de tu base de datos
-            // Laravel inyectará en automático el tiempo en 'created_at' y 'updated_at'
-            Foro::create([
-                'ID_usuario' => $data['ID_usuario'] ?? $data['idUsuario'], // Soporte por si Android lo mandó con otra key
-                'Titulo'     => $data['Titulo'],
-                'Contenido'  => $data['Contenido'],
-                'Categoria'  => $data['Categoria'] ?? 'General' // Si viene vacío, le pone General
-            ]);
+            // 🚀 RESPALDO: Si por alguna razón Categoria llega vacía, le asignamos 'General'
+            if (!isset($data['Categoria']) || empty($data['Categoria'])) {
+                $data['Categoria'] = 'General';
+            }
 
-            // 🚀 Retornamos un JSON plano para evitar que Eloquent rompa al mapear objetos
+            // Creamos el registro en la base de datos con los datos limpios
+            $foro = Foro::create($data);
+
             return response()->json([
-                'status'  => 'success',
-                'message' => 'Post creado con éxito'
+                'status' => 'success',
+                'message' => 'Post creado con éxito',
+                'data' => $foro
             ], 201);
 
         } catch (\Exception $e) {
-            // Este catch te regresará el string exacto en el Toast de Android si algo falla
             return response()->json([
-                'status'  => 'error',
+                'status' => 'error',
                 'message' => 'Error en el servidor al crear el foro',
-                'error'   => $e->getMessage()
+                'error' => $e->getMessage()
             ], 500);
         }
     }
