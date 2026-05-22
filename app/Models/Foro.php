@@ -12,20 +12,19 @@ class Foro extends Model
     protected $table = 'foros';
     protected $primaryKey = 'ID_foro';
 
-    // 🌟 IMPORTANTE: Si no usas "created_at" y "updated_at" nativos de Laravel, desactívalos
+    // Desactivamos timestamps automáticos (created_at / updated_at)
     public $timestamps = false; 
 
     protected $fillable = [
         'ID_usuario',
         'Titulo',
         'Contenido',
-        'Categoria',
-        'Fecha_Creacion' // 🌟 Agregamos la fecha aquí para permitir su inserción masiva
+        'Fecha_Creacion' // Solo los campos reales de tu tabla
     ];
 
-    // Relación para que funcione el Foro::with('usuario')
+    // Relación corregida apuntando a ID_usuario
     public function usuario()
     {
-        return $this->belongsTo(Usuario::class, 'ID_usuario', 'ID_usuario'); // Añadimos llaves explícitas
+        return $this->belongsTo(Usuario::class, 'ID_usuario', 'ID_usuario');
     }
 }

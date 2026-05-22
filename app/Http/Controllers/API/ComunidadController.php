@@ -18,18 +18,13 @@ class ComunidadController extends Controller
 // --- LÓGICA DE FOROS CORREGIDA CONTRA ERRORES 500 ---
   public function crearForo(Request $request) {
         try {
-            $data = $request->all();
+            // Recogemos solo los campos que Android envía y que existen en la BD
+            $data = $request->only(['ID_usuario', 'Titulo', 'Contenido']);
 
-            // 🚀 Inyectamos la fecha actual del servidor
-            if (!isset($data['Fecha_Creacion'])) {
-                $data['Fecha_Creacion'] = now()->toDateTimeString();
-            }
+            // 🚀 Formateamos la fecha únicamente como YYYY-MM-DD ya que tu columna es tipo 'date'
+            $data['Fecha_Creacion'] = now()->toDateString(); 
 
-            // 🚀 Inyectamos una categoría por defecto para evitar campos vacíos en BD
-            if (!isset($data['Categoria'])) {
-                $data['Categoria'] = 'General';
-            }
-
+            // Creamos el registro
             $foro = Foro::create($data);
 
             return response()->json([
@@ -38,13 +33,13 @@ class ComunidadController extends Controller
             ], 201);
 
         } catch (\Exception $e) {
+            // Si vuelve a fallar, este mensaje te dirá exactamente el renglón y el error de MySQL
             return response()->json([
-                'message' => 'Error interno en el servidor al crear el foro',
+                'message' => 'Error en el servidor al crear el foro',
                 'error' => $e->getMessage()
             ], 500);
         }
     }
-
     // --- LÓGICA DE DIARIOS (PRIVADOS) ---
     public function getMisDiarios($idUsuario) {
         return response()->json(Diario::where('ID_usuario', $idUsuario)->latest()->get());
