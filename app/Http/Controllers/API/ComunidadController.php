@@ -16,27 +16,33 @@ class ComunidadController extends Controller
     }
 
 // --- LÓGICA DE FOROS CORREGIDA CONTRA ERRORES 500 ---
-  public function crearForo(Request $request) {
+// --- LÓGICA DE FOROS CORREGIDA AL 100% CONTRA ERRORES 500 ---
+    public function crearForo(Request $request) {
         try {
-            // Recogemos solo los campos que Android envía y que existen en la BD
-            $data = $request->only(['ID_usuario', 'Titulo', 'Contenido']);
+            // Caputamos todo el paquete que manda Android
+            $data = $request->all();
 
-            // 🚀 Formateamos la fecha únicamente como YYYY-MM-DD ya que tu columna es tipo 'date'
-            $data['Fecha_Creacion'] = now()->toDateString(); 
+            // Insertamos directamente usando las columnas reales de tu base de datos
+            // Laravel inyectará en automático el tiempo en 'created_at' y 'updated_at'
+            Foro::create([
+                'ID_usuario' => $data['ID_usuario'] ?? $data['idUsuario'], // Soporte por si Android lo mandó con otra key
+                'Titulo'     => $data['Titulo'],
+                'Contenido'  => $data['Contenido'],
+                'Categoria'  => $data['Categoria'] ?? 'General' // Si viene vacío, le pone General
+            ]);
 
-            // Creamos el registro
-            $foro = Foro::create($data);
-
+            // 🚀 Retornamos un JSON plano para evitar que Eloquent rompa al mapear objetos
             return response()->json([
-                'message' => 'Post creado con éxito',
-                'data' => $foro
+                'status'  => 'success',
+                'message' => 'Post creado con éxito'
             ], 201);
 
         } catch (\Exception $e) {
-            // Si vuelve a fallar, este mensaje te dirá exactamente el renglón y el error de MySQL
+            // Este catch te regresará el string exacto en el Toast de Android si algo falla
             return response()->json([
+                'status'  => 'error',
                 'message' => 'Error en el servidor al crear el foro',
-                'error' => $e->getMessage()
+                'error'   => $e->getMessage()
             ], 500);
         }
     }
