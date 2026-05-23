@@ -78,10 +78,19 @@ class ComunidadController extends Controller
         return response()->json(Diario::where('ID_usuario', $idUsuario)->latest()->get());
     }
 
-    public function guardarDiario(Request $request) {
-        $entrada = Diario::create($request->all());
+public function guardarDiario(Request $request) {
+    try {
+        $entrada = Diario::create([
+            'ID_usuario'   => $request->input('ID_usuario'),
+            'Titulo'       => $request->input('Titulo'),
+            'Entrada'      => $request->input('Entrada'),
+            'Estado_Animo' => $request->input('Estado_Animo')
+        ]);
         return response()->json(['message' => 'Nota guardada', 'data' => $entrada], 201);
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'Error al guardar', 'error' => $e->getMessage()], 500);
     }
+}
 
     // --- LÓGICA DE CHATS ---
     public function enviarMensaje(Request $request) {

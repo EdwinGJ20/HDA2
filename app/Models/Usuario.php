@@ -16,14 +16,8 @@ class Usuario extends Authenticatable
     public $timestamps = false;
 
     protected $fillable = [
-        'Nombre',
-        'Correo_Electronico',
-        'Password', // <--- Agregado para el cifrado
-        'Fecha_Registro',
-        'Rol',
-        'Edad',
-        'Localidad'
-    ];
+    'Nombre', 'Correo_Electronico', 'Password', 'Fecha_Registro', 'Rol', 'Edad', 'Localidad', 'activo'
+];
 
     /**
      * Los atributos que deben ocultarse para los arreglos (JSON).
