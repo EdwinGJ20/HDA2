@@ -87,39 +87,32 @@ class TestController extends Controller
         ]);
     }
     // En tu TestController.php
-public function getNextTestForUser($idUsuario)
-{
-   // 1. Obtener IDs únicos de tests realizados
-    $testsRealizados = \App\Models\Evaluacion::where('ID_usuario', $idUsuario)
-        ->distinct() // <--- Agrega esto
-        ->pluck('ID_test')
-        ->toArray();
+// Ajuste: Ahora devuelve siempre el primer test (permitiendo repetición)
+    public function getNextTestForUser($idUsuario)
+    {
+        // Eliminamos el filtrado whereNotIn para que el usuario pueda volver a hacer tests
+        $test = Test::with('preguntas')->first();
 
-    // 2. Buscar el siguiente test
-    $test = Test::whereNotIn('ID_test', $testsRealizados)
-        ->with('preguntas')
-        ->first();
+        if (!$test) {
+            return response()->json(['message' => 'No hay tests disponibles en el sistema'], 404);
+        }
 
-    if (!$test) {
-        return response()->json(['message' => 'Has completado todos los tests'], 404);
+        // 3. Aplicar el formato para Android
+        $opcionesFijas = ["Casi siempre", "Frecuentemente", "A veces", "Nunca o casi nunca"];
+
+        $testFormateado = [
+            'ID_test' => $test->ID_test,
+            'Nombre' => $test->Nombre,
+            'Descripcion' => $test->Descripcion,
+            'preguntas' => $test->preguntas->map(function($item) use ($opcionesFijas) {
+                return [
+                    'ID_pregunta' => $item->ID_pregunta,
+                    'pregunta'    => $item->Pregunta,
+                    'opciones'    => $opcionesFijas
+                ];
+            })
+        ];
+
+        return response()->json($testFormateado, 200);
     }
-
-    // 3. Aplicar el mismo formateo que en show() para que Android lo entienda
-    $opcionesFijas = ["Casi siempre", "Frecuentemente", "A veces", "Nunca o casi nunca"];
-
-    $testFormateado = [
-        'ID_test' => $test->ID_test,
-        'Nombre' => $test->Nombre,
-        'Descripcion' => $test->Descripcion,
-        'preguntas' => $test->preguntas->map(function($item) use ($opcionesFijas) {
-            return [
-                'ID_pregunta' => $item->ID_pregunta,
-                'pregunta'    => $item->Pregunta,
-                'opciones'    => $opcionesFijas
-            ];
-        })
-    ];
-
-    return response()->json($testFormateado, 200);
-}
 }
