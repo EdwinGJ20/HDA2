@@ -90,12 +90,12 @@ class TestController extends Controller
 // Ajuste: Ahora devuelve siempre el primer test (permitiendo repetición)
     public function getNextTestForUser($idUsuario)
     {
-        // Eliminamos el filtrado whereNotIn para que el usuario pueda volver a hacer tests
-        $test = Test::with('preguntas')->first();
+        // Cambiamos first() por inRandomOrder()->first()
+    $test = Test::with('preguntas')->inRandomOrder()->first();
 
-        if (!$test) {
-            return response()->json(['message' => 'No hay tests disponibles en el sistema'], 404);
-        }
+    if (!$test) {
+        return response()->json(['message' => 'No hay tests disponibles'], 404);
+    }
 
         // 3. Aplicar el formato para Android
         $opcionesFijas = ["Casi siempre", "Frecuentemente", "A veces", "Nunca o casi nunca"];
