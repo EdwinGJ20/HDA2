@@ -89,8 +89,9 @@ class TestController extends Controller
     // En tu TestController.php
 public function getNextTestForUser($idUsuario)
 {
-    // 1. Obtener IDs de tests realizados
+   // 1. Obtener IDs únicos de tests realizados
     $testsRealizados = \App\Models\Evaluacion::where('ID_usuario', $idUsuario)
+        ->distinct() // <--- Agrega esto
         ->pluck('ID_test')
         ->toArray();
 
