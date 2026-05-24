@@ -41,6 +41,7 @@ Route::get('HDA2/evaluaciones/reporte/{id}', [EvaluacionController::class, 'obte
 Route::apiResource('HDA2/Respuestas_Eva', Respuestas_EvaController::class);
 Route::apiResource('HDA2/tipos_resultados', Tipos_ResultadosController::class);
 Route::apiResource('HDA2/tipos_diagnostico', Tipos_DiagnosticoController::class);
+Route::get('HDA2/tests/next/{idUsuario}', [TestController::class, 'getNextTestForUser']);
 
 // --- RECOMENDACIONES ---
 Route::apiResource('HDA2/Alimentos', AlimentosController::class);
