@@ -115,4 +115,13 @@ class TestController extends Controller
 
         return response()->json($testFormateado, 200);
     }
+    // Historial de resultados del usuario
+public function getHistorial($idUsuario)
+{
+    $historial = \App\Models\Evaluacion::where('ID_usuario', $idUsuario)
+        ->orderBy('Fecha', 'DESC')
+        ->get(['ID_test', 'Puntaje_Total', 'Fecha', 'Nivel_Riesgo']);
+
+    return response()->json($historial, 200);
+}
 }
