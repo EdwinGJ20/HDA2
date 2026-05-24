@@ -28,6 +28,6 @@ class Test extends Model
         // El primer parámetro es el modelo relacionado.
         // El segundo es la llave foránea en la tabla 'preguntas'.
         // El tercero es la llave local en la tabla 'test'.
-        return $this->hasMany(Pregunta::class, 'ID_test', 'ID_test');
+        return $this->hasMany(Preguntas::class, 'ID_test', 'ID_test');
     }
 }
